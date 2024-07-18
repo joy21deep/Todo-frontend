@@ -17,15 +17,19 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel,
   TextField,
   Card,
-  CardContent
+  CardContent,
+  Button
 } from '@mui/material';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import { Button } from '@mui/material';
 import ModalForm from '../dashboard/modal';
 
 const TaskManager = () => {
@@ -40,7 +44,6 @@ const TaskManager = () => {
     console.log('Task saved:', task);
     // You can add the task to your state or make an API call to save it
   };
-
 
   useEffect(() => {
     // Fetch data based on filters and segregate tasks
@@ -75,23 +78,38 @@ const TaskManager = () => {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-      <Box sx={{ padding: 2 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 2 }}>
         <Typography variant="h4" gutterBottom>
           Task Manager
         </Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, marginBottom: 2 }}>
-          <TextField
-            label="Date"
-            type="date"
-            name="date"
-            value={filters.date}
-            onChange={handleFilterChange}
-            InputLabelProps={{ shrink: true }}
-          />
-          <Button variant="contained" color="info" onClick={handleOpen}>
-            Create Task
-          </Button>
-          <ModalForm open={open} handleClose={handleClose} handleSave={handleSave} />
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flec-end', gap: 2 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2}}>
+            <Typography variant="h6">Filters</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2,alignItems: 'flex-end' }}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DemoContainer components={['DateRangePicker']}>
+                  <DemoItem label="1 calendar" component="DateRangePicker">
+                    <DateRangePicker calendars={1} />
+                  </DemoItem>
+                </DemoContainer>
+              </LocalizationProvider>
+              <TextField
+                label="Date"
+                type="date"
+                name="date"
+                value={filters.date}
+                onChange={handleFilterChange}
+                InputLabelProps={{ shrink: true }}
+                sx={{ marginBottom: 0 }} // Ensure no extra bottom margin
+              />
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
+            <Button variant="contained" color="info" onClick={handleOpen}>
+              Create Task
+            </Button>
+            <ModalForm open={open} handleClose={handleClose} handleSave={handleSave} />
+          </Box>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Card>
