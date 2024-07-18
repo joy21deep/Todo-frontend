@@ -1,4 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import Grid from "@mui/material/Grid";
+
+// Material Dashboard 2 React components
+import MDBox from "components/MDBox";
+import MDTypography from "components/MDTypography";
 import {
   Accordion,
   AccordionSummary,
@@ -31,6 +36,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import ModalForm from '../dashboard/modal';
+import { Description } from '@mui/icons-material';
 
 const TaskManager = () => {
   const [tasks, setTasks] = useState({ pending: [], successful: [] });
@@ -50,11 +56,14 @@ const TaskManager = () => {
     // For demonstration, we're using sample data
     const fetchedTasks = {
       pending: [
-        { id: 1, title: 'Pending Task 1' },
-        { id: 2, title: 'Pending Task 2' }
+        { id: 1, title: 'Pending Task 1', 
+          description: "fcgbhghgbhdhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhfcgbhghgbhdhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhbchhbgchhhhhhhhhhhhhhhhbchhbgc",
+           dueDate: '2024-09-12', completionDate: null, status: 'pending' },
+        { id: 2, title: 'Pending Task 2', description: "fcgbhghgbhdhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhbchhbgc",
+           dueDate: '2024-09-12', completionDate: null, status: 'pending' }
       ],
       successful: [
-        { id: 3, title: 'Successful Task 1', completionDate: '2024-07-15' }
+        { id: 3, title: 'Successful Task 1', description: "fcgbhghgbhdhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhbchhbgc", dueDate: '2024-06-12', completionDate: '2024-07-16', status: 'completed' }
       ]
     };
     setTasks(fetchedTasks);
@@ -82,10 +91,16 @@ const TaskManager = () => {
         <Typography variant="h4" gutterBottom>
           Task Manager
         </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flec-end', gap: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2}}>
+        <Box sx={{ display: 'flex', flexDirection: 'row-reverse', justifyContent: 'space-between', alignItems: 'flex-end', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
+            <Button variant="contained" color="info" onClick={handleOpen}>
+              Create Task
+            </Button>
+            <ModalForm open={open} handleClose={handleClose} handleSave={handleSave} />
+          </Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-end' }}>
             <Typography variant="h6">Filters</Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2,alignItems: 'flex-end' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, alignItems: 'flex-end', float: "right" }}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DemoContainer components={['DateRangePicker']}>
                   <DemoItem label="1 calendar" component="DateRangePicker">
@@ -104,12 +119,6 @@ const TaskManager = () => {
               />
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2 }}>
-            <Button variant="contained" color="info" onClick={handleOpen}>
-              Create Task
-            </Button>
-            <ModalForm open={open} handleClose={handleClose} handleSave={handleSave} />
-          </Box>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Card>
@@ -119,37 +128,65 @@ const TaskManager = () => {
                   <Typography>Pending Tasks</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <TableContainer component={Paper}>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Task</TableCell>
-                          <TableCell>Action</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {tasks.pending.map(task => (
-                          <TableRow key={task.id}>
-                            <TableCell>
-                              <FormControlLabel
-                                control={<Checkbox onChange={(event) => handleCheckboxChange(event, task.id)} />}
-                                label={task.title}
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <FormControl>
-                                <Select onChange={(event) => handleDeleteOptionChange(event, task.id)}>
-                                  <MenuItem value=""><em>None</em></MenuItem>
-                                  <MenuItem value="softDelete">Soft Delete</MenuItem>
-                                  <MenuItem value="hardDelete">Hard Delete</MenuItem>
-                                </Select>
-                              </FormControl>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                <TableContainer component={Paper}>
+      <Table>
+        <TableHead sx={{ backgroundColor: "#626277 !important" }}>
+          <TableRow>
+            <TableCell sx={{ color: "white !important", fontSize: 20 }}>Task</TableCell>
+            <TableCell sx={{ color: "white !important", fontSize: 20 }}>
+              Description
+            </TableCell>
+            <TableCell sx={{ color: "white !important", fontSize: 20 }}>
+              Due Date
+            </TableCell>
+            <TableCell sx={{ color: "white !important", fontSize: 20 }}>Status</TableCell>
+            <TableCell sx={{ color: "white !important", fontSize: 20 }}>Action</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {tasks.pending.map((row) => (
+            <TableRow key={row.id}>
+              <TableCell>
+                {" "}
+                <FormControlLabel
+                  control={<Checkbox checked={true} />}
+                  label={row.title}
+                />
+              </TableCell>
+              <TableCell
+                style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+              >
+                {row.description}
+              </TableCell>
+              <TableCell>{row.dueDate}</TableCell>
+              <TableCell>
+                <Typography
+                  color={row.status === "pending" ? "error" : "inherit"}
+                >
+                  {row.status}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <FormControl>
+                  <Select
+                    defaultValue=""
+                    onChange={(event) =>
+                      handleDeleteOptionChange(event, task.id)
+                    }
+                  >
+                    <MenuItem value="completed">
+                      <em> Completed</em>
+                    </MenuItem>
+                    <MenuItem value="softDelete">Soft Delete</MenuItem>
+                    <MenuItem value="hardDelete">Hard Delete</MenuItem>
+                  </Select>
+                </FormControl>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
                 </AccordionDetails>
               </Accordion>
             </CardContent>
@@ -162,18 +199,24 @@ const TaskManager = () => {
                 </AccordionSummary>
                 <AccordionDetails>
                   <TableContainer component={Paper}>
-                    <Table>
-                      <TableHead>
+                    <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                      <TableHead sx={{ backgroundColor: "black", color: "white", fontSize: 14 }}>
                         <TableRow>
                           <TableCell>Task</TableCell>
-                          <TableCell>Completion Date</TableCell>
+                          <TableCell align="right">Description</TableCell>
+                          <TableCell align="right">Due Date</TableCell>
+                          <TableCell align="right">Completion Date</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {tasks.successful.map(task => (
+                        {tasks.successful.map((task) => (
                           <TableRow key={task.id}>
                             <TableCell>{task.title}</TableCell>
-                            <TableCell>{task.completionDate}</TableCell>
+                            <TableCell align="right"> <Typography variant="body1" component="div" style={{ whiteSpace: 'pre-line' }}>
+                              {task.description}
+                            </Typography></TableCell>
+                            <TableCell align="right">{task.dueDate}</TableCell>
+                            <TableCell align="right">{task.completionDate}</TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
