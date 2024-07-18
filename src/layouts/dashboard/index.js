@@ -14,6 +14,8 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
+import React, { useState } from 'react';
+
 import Grid from "@mui/material/Grid";
 
 // Material Dashboard 2 React components
@@ -34,9 +36,20 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 // Dashboard components
 import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
+import { Button } from '@mui/material';
+import ModalForm from './modal';
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleSave = (task) => {
+    console.log('Task saved:', task);
+    // You can add the task to your state or make an API call to save it
+  };
 
   return (
     <DashboardLayout>
@@ -50,11 +63,7 @@ function Dashboard() {
                 icon="weekend"
                 title="Bookings"
                 count={281}
-                percentage={{
-                  color: "success",
-                  amount: "+55%",
-                  label: "than lask week",
-                }}
+
               />
             </MDBox>
           </Grid>
@@ -100,62 +109,16 @@ function Dashboard() {
                   label: "Just updated",
                 }}
               />
+              <Button variant="contained" color="primary" onClick={handleOpen}>
+                Create Task
+              </Button>
+              <ModalForm open={open} handleClose={handleClose} handleSave={handleSave} />
             </MDBox>
           </Grid>
         </Grid>
-        <MDBox mt={4.5}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsBarChart
-                  color="info"
-                  title="website views"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={reportsBarChartData}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="success"
-                  title="daily sales"
-                  description={
-                    <>
-                      (<strong>+15%</strong>) increase in today sales.
-                    </>
-                  }
-                  date="updated 4 min ago"
-                  chart={sales}
-                />
-              </MDBox>
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <MDBox mb={3}>
-                <ReportsLineChart
-                  color="dark"
-                  title="completed tasks"
-                  description="Last Campaign Performance"
-                  date="just updated"
-                  chart={tasks}
-                />
-              </MDBox>
-            </Grid>
-          </Grid>
-        </MDBox>
-        <MDBox>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={8}>
-              <Projects />
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <OrdersOverview />
-            </Grid>
-          </Grid>
-        </MDBox>
+
       </MDBox>
-      <Footer />
+
     </DashboardLayout>
   );
 }
