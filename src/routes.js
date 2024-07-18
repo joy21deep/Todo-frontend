@@ -38,6 +38,7 @@ Coded by www.creative-tim.com
 // Material Dashboard 2 React layouts
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
+import Todo from "layouts/todo"
 import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
@@ -73,6 +74,14 @@ const routes = [
     route: "/tables",
     component: <Tables />,
   },
+  {
+    type: "collapse",
+    name: "Todo",
+    key: "todo",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/todo",
+    component: <Todo />,
+  },
   // {
   //   type: "collapse",
   //   name: "Billing",
@@ -97,22 +106,22 @@ const routes = [
   //   route: "/notifications",
   //   component: <Notifications />,
   // },
-  {
-    type: "collapse",
-    name: "Profile",
-    key: "profile",
-    icon: <Icon fontSize="small">person</Icon>,
-    route: "/profile",
-    component: <Profile />,
-  },
-  {
-    type: "collapse",
-    name: "Sign In",
-    key: "sign-in",
-    icon: <Icon fontSize="small">login</Icon>,
-    route: "/authentication/sign-in",
-    component: <SignIn />,
-  },
+  // {
+  //   type: "collapse",
+  //   name: "Profile",
+  //   key: "profile",
+  //   icon: <Icon fontSize="small">person</Icon>,
+  //   route: "/profile",
+  //   component: <Profile />,
+  // },
+  // {
+  //   type: "collapse",
+  //   name: "Sign In",
+  //   key: "sign-in",
+  //   icon: <Icon fontSize="small">login</Icon>,
+  //   route: "/authentication/sign-in",
+  //   component: <SignIn />,
+  // },
   // {
   //   type: "examples",
   //   name: "User Profile",
@@ -129,14 +138,14 @@ const routes = [
   //   route: "/user-management",
   //   component: <UserManagement />,
   // },
-  {
-    type: "collapse",
-    name: "Sign Up",
-    key: "sign-up",
-    icon: <Icon fontSize="small">assignment</Icon>,
-    route: "/authentication/sign-up",
-    component: <SignUp />,
-  },
+  // {
+  //   type: "collapse",
+  //   name: "Sign Up",
+  //   key: "sign-up",
+  //   icon: <Icon fontSize="small">assignment</Icon>,
+  //   route: "/authentication/sign-up",
+  //   component: <SignUp />,
+  // },
   {
     type: "auth",
     name: "Login",
