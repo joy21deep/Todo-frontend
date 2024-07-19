@@ -76,10 +76,10 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Todo",
-    key: "todo",
+    name: "Task Manager",
+    key: "task-manager",
     icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/todo",
+    route: "/task-manager",
     component: <Todo />,
   },
   // {
