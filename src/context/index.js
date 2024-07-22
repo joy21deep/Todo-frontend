@@ -42,19 +42,34 @@ const AuthContextProvider = ({ children }) => {
   const location = useLocation();
 
   const token = localStorage.getItem("token");
+  console.log("is token available ",token);
 
   useEffect(() => {
-    if (!token) return;
-
-    setIsAuthenticated(true);
-    navigate(location.pathname);
+    if (token)
+      {
+        setIsAuthenticated(false);
+        navigate(location.pathname);
+      }
+      else{
+      console.log("is token available11111111111111111111 ",token);
+      setIsAuthenticated(false);
+      navigate("/auth/login");
+      }
+    
   }, []);
 
   useEffect(() => {
-    if (!token) return;
-
-    setIsAuthenticated(isAuthenticated);
-    navigate(location.pathname);
+    if (token)
+      {
+        setIsAuthenticated(isAuthenticated);
+        navigate(location.pathname);
+    }
+    else{
+    console.log("is token available11111111111111111111 ",token);
+    setIsAuthenticated(false);
+    navigate("/auth/login");
+    }
+    
   }, [isAuthenticated]);
 
   const login = () => {
@@ -67,9 +82,13 @@ const AuthContextProvider = ({ children }) => {
     setIsAuthenticated(false);
     navigate("/auth/login");
   };
+  const checkAuth = () => {
+    setIsAuthenticated(false);
+    navigate("/auth/login");
+  };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout,checkAuth }}>
       {children}
     </AuthContext.Provider>
   );

@@ -130,7 +130,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
   });
 
   const handleLogOut = async () => {
-    const response = await AuthService.logout();
+    // const response = await AuthService.logout();
+    localStorage.removeItem("token");
     authContext.logout();
   };
 

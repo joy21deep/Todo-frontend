@@ -14,7 +14,7 @@ Coded by www.creative-tim.com
 */
 
 // @mui material components
-import React, { useState } from 'react';
+import React, { useState ,useContext,useEffect} from 'react';
 import { Tooltip, Typography, Box } from '@mui/material';
 import ReactCalendar from 'react-calendar';
 import Grid from "@mui/material/Grid";
@@ -39,8 +39,17 @@ import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import 'react-calendar/dist/Calendar.css';
 import './CustomCalendar.css'; 
+import { AuthContext } from 'context';
 
 function Dashboard() {
+  const token = localStorage.getItem("token");
+  const authContext = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!token) {
+      authContext.checkAuth();
+    }
+  }, []);
   const sampleTasks = [
     { id: 1, date: '2024-07-18', title: 'Task 1' },
     { id: 2, date: '2024-07-18', title: 'Task 2' },

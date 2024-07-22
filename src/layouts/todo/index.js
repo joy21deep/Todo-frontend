@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState,useContext,useEffect } from 'react';
 import Grid from "@mui/material/Grid";
 import {
   Accordion,
@@ -31,8 +31,44 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import ModalForm from '../dashboard/modal';
+import { AuthContext } from 'context';
+
 
 const TaskManager = () => {
+  const token = localStorage.getItem("token");
+  const authContext = useContext(AuthContext);
+  function getMondayAndFriday(desiredDate) {
+    const date = new Date(desiredDate);
+    const dayOfWeek = date.getDay();
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+    const monday = new Date(date);
+    monday.setDate(date.getDate() + diffToMonday);
+
+    const friday = new Date(monday);
+    friday.setDate(monday.getDate() + 4);
+
+    return [monday, friday];
+}
+function getCurrentMonthDates() {
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  return {
+    firstDate: firstDay,
+    lastDate: lastDay
+  };
+}
+
+
+// Example usage:
+const dates = getCurrentMonthDates();
+const desiredDate = new Date(); // Replace with your desired date
+const [monday, friday] = getMondayAndFriday(desiredDate);
+  useEffect(() => {
+    if (!token) {
+      authContext.checkAuth();
+    }
+  }, []);
   const [tasks, setTasks] = useState({ pending: [], successful: [] });
   const [filters, setFilters] = useState({ month: '', date: '', week: '' });
   const [open, setOpen] = useState(false);

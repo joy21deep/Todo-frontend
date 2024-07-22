@@ -9,6 +9,9 @@ import {
   IconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import { addTask } from "../../../assets/globalAPI"
 
 const style = {
   position: 'absolute',
@@ -36,10 +39,31 @@ const ModalForm = ({ open, handleClose, handleSave }) => {
     }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    handleSave(task);
+    try {
+      const response = await addTask(task);
+      if (response.status === 201) {
+      Swal.fire({
+        icon: "success",
+        title: "Task Added succesfully",
+        showConfirmButton: false,
+        timer: 500,
+      });
+      handleSave(task);
+      setTask({
+        name: '',
+        description: '',
+        dueDate: ''
+      })
     handleClose();
+      }
+    }
+    catch (err) {
+      console.log("task",err);
+
+    }
+    
   };
 
   return (
@@ -69,7 +93,7 @@ const ModalForm = ({ open, handleClose, handleSave }) => {
             value={task.name}
             onChange={handleChange}
           />
-         <TextField
+          <TextField
             margin="normal"
             required
             fullWidth

@@ -1,17 +1,21 @@
-import { useContext, useState } from "react";
+import { useContext, useState,usenav } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 // react-router-dom components
 import { Link } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
-
+import { usercreate } from "assets/globalAPI";
 // Authentication layout components
 import CoverLayout from "layouts/authentication/components/CoverLayout";
 
@@ -21,22 +25,24 @@ import bgImage from "assets/images/bg-sign-up-cover.jpeg";
 import AuthService from "services/auth-service";
 import { AuthContext } from "context";
 import { InputLabel } from "@mui/material";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 function Register() {
   const authContext = useContext(AuthContext);
-
+  const MySwal = withReactContent(Swal);
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     name: "",
     email: "",
     password: "",
-    agree: false,
+    userType: "user",
   });
 
   const [errors, setErrors] = useState({
     nameError: false,
     emailError: false,
     passwordError: false,
-    agreeError: false,
     error: false,
     errorText: "",
   });
@@ -63,55 +69,70 @@ function Register() {
       return;
     }
 
-    if (inputs.password.trim().length < 8) {
+    if (inputs.password.trim().length < 4) {
       setErrors({ ...errors, passwordError: true });
       return;
     }
 
-    if (inputs.agree === false) {
-      setErrors({ ...errors, agreeError: true });
-      return;
-    }
+    // if (inputs.agree === false) {
+    //   setErrors({ ...errors, agreeError: true });
+    //   return;
+    // }
 
     // here will be the post action to add a user to the db
-    const newUser = { name: inputs.name, email: inputs.email, password: inputs.password };
+    // const newUser = { name: inputs.name, email: inputs.email, password: inputs.password };
+    const data = { username: inputs.name, email: inputs.email, password: inputs.password,userType: inputs.userType};
 
-    const myData = {
-      data: {
-        type: "users",
-        attributes: { ...newUser, password_confirmation: newUser.password },
-        relationships: {
-          roles: {
-            data: [
-              {
-                type: "roles",
-                id: "1",
-              },
-            ],
-          },
-        },
-      },
-    };
+    // const myData = {
+    //   data: {
+    //     type: "users",
+    //     attributes: { ...newUser, password_confirmation: newUser.password },
+    //     relationships: {
+    //       roles: {
+    //         data: [
+    //           {
+    //             type: "roles",
+    //             id: "1",
+    //           },
+    //         ],
+    //       },
+    //     },
+    //   },
+    // };
 
     try {
-      const response = await AuthService.register(myData);
-      authContext.login(response.access_token, response.refresh_token);
+      const response = await usercreate (data);
+      console.error("err",response);
 
-      setInputs({
-        name: "",
-        email: "",
-        password: "",
-        agree: false,
-      });
+      // authContext.login(response.access_token, response.refresh_token);
 
-      setErrors({
-        nameError: false,
-        emailError: false,
-        passwordError: false,
-        agreeError: false,
-        error: false,
-        errorText: "",
-      });
+      if(response.status){
+        MySwal.fire({
+          title: 'Success!',
+          text: 'Your action was successful!',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+
+
+        setInputs({
+          name: "",
+          email: "",
+          password: "",
+          userType: "user",
+        });
+  
+        setErrors({
+          nameError: false,
+          emailError: false,
+          passwordError: false,
+          error: false,
+          errorText: "",
+        });
+       navigate("/auth/login") 
+      }
+     
+
     } catch (err) {
       setErrors({ ...errors, error: true, errorText: err.message });
       console.error(err);
@@ -204,7 +225,7 @@ function Register() {
                 </MDTypography>
               )}
             </MDBox>
-            <MDBox display="flex" alignItems="center" ml={-1}>
+            {/* <MDBox display="flex" alignItems="center" ml={-1}>
               <Checkbox name="agree" id="agree" onChange={changeHandler} />
               <InputLabel
                 variant="standard"
@@ -225,12 +246,26 @@ function Register() {
               >
                 Terms and Conditions
               </MDTypography>
+            </MDBox> */}
+              <MDBox mb={2}>
+              <InputLabel id="user-type-label">User Type</InputLabel>
+              <Select
+                labelId="user-type-label"
+                id="userType"
+                name="userType"
+                value={inputs.userType}
+                onChange={changeHandler}
+                fullWidth
+              >
+                <MenuItem value="admin">Admin</MenuItem>
+                <MenuItem value="user">User</MenuItem>
+              </Select>
             </MDBox>
-            {errors.agreeError && (
+            {/* {errors.agreeError && (
               <MDTypography variant="caption" color="error" fontWeight="light">
                 You must agree to the Terms and Conditions
               </MDTypography>
-            )}
+            )} */}
             {errors.error && (
               <MDTypography variant="caption" color="error" fontWeight="light">
                 {errors.errorText}
