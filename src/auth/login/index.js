@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState,useEffect } from "react";
 
 // react-router-dom components
 import { Link } from "react-router-dom";
@@ -28,6 +28,9 @@ import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 import AuthService from "services/auth-service";
 import { AuthContext } from "context";
+import { login } from "assets/globalAPI";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 function Login() {
   const authContext = useContext(AuthContext);
@@ -45,6 +48,17 @@ function Login() {
     emailError: false,
     passwordError: false,
   });
+
+  useEffect(() => {
+    const savedUser = JSON.parse(localStorage.getItem("user"));
+    if (savedUser) {
+      setInputs({
+        email: savedUser.email,
+        password: savedUser.password,
+      });
+      setRememberMe(true);
+    }
+  }, []);
 
   const addUserHandler = (newUser) => setUser(newUser);
 
@@ -68,26 +82,43 @@ function Login() {
       return;
     }
 
-    if (inputs.password.trim().length < 6) {
+    if (inputs.password.trim().length < 4) {
       setErrors({ ...errors, passwordError: true });
       return;
     }
 
-    const newUser = { email: inputs.email, password: inputs.password };
-    addUserHandler(newUser);
+    const data = { email: inputs.email, password: inputs.password };
+    addUserHandler(data);
 
-    const myData = {
-      data: {
-        type: "token",
-        attributes: { ...newUser },
-      },
-    };
+    // const myData = {
+    //   data: {
+    //     type: "token",
+    //     attributes: { ...newUser },
+    //   },
+    // };
 
     try {
-      const response = await AuthService.login(myData);
-      console.log("whats the error",myData);
+      const response = await login(data);
+      console.log("whats the error",response);
+      if (response.status === 200) {
+        const token = response.data.token;
+        localStorage.setItem("token", token);
+        if (rememberMe) {
+          localStorage.setItem("user", JSON.stringify(data));
+        } else {
+          localStorage.removeItem("user");
+        }
 
+        Swal.fire({
+          icon: "success",
+          title: "Login Successful",
+          showConfirmButton: false,
+          timer: 500,
+        });
       authContext.login();
+
+      }
+
     } catch (res) {
       if (res.hasOwnProperty("message")) {
         setCredentialsError(res.message);
@@ -174,7 +205,7 @@ function Login() {
                 {credentialsErros}
               </MDTypography>
             )}
-            <MDBox mt={3} mb={1} textAlign="center">
+            {/* <MDBox mt={3} mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
                 Forgot your password? Reset it{" "}
                 <MDTypography
@@ -188,7 +219,7 @@ function Login() {
                   here
                 </MDTypography>
               </MDTypography>
-            </MDBox>
+            </MDBox> */}
             <MDBox mb={1} textAlign="center">
               <MDTypography variant="button" color="text">
                 Don&apos;t have an account?{" "}
