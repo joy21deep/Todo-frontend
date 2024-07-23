@@ -30,7 +30,6 @@ import AuthService from "services/auth-service";
 import { AuthContext } from "context";
 import { login } from "assets/globalAPI";
 import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 
 function Login() {
   const authContext = useContext(AuthContext);
