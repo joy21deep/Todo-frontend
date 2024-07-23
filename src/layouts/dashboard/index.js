@@ -40,32 +40,44 @@ import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import 'react-calendar/dist/Calendar.css';
 import './CustomCalendar.css'; 
 import { AuthContext } from 'context';
+import { dashboardData } from 'assets/globalAPI';
 
 function Dashboard() {
   const token = localStorage.getItem("token");
   const authContext = useContext(AuthContext);
-
-  useEffect(() => {
-    if (!token) {
-      authContext.checkAuth();
-    }
-  }, []);
-  const sampleTasks = [
-    { id: 1, date: '2024-07-18', title: 'Task 1' },
-    { id: 2, date: '2024-07-18', title: 'Task 2' },
-    { id: 3, date: '2024-07-19', title: 'Task 3' },
-    { id: 4, date: '2024-07-12', title: 'Task 8' },
-    { id: 5, date: '2024-07-12', title: 'Task 9' },
-    { id: 6, date: '2024-07-30', title: 'Task 11' },
-    { id: 7, date: '2024-07-15', title: 'Task 1' },
-    { id: 8, date: '2024-07-20', title: 'Task 4' },
-    { id: 9, date: '2024-08-20', title: 'Task 5' },
-    { id: 10, date: '2024-06-22', title: 'Task 6' },
-    { id: 11, date: '2023-12-20', title: 'Task 7 ' },
-  ];
   const { sales, tasks } = reportsLineChartData;
   const [value, setValue] = useState(new Date());
+  const [sampleTasks,setSampleTasks]=useState([]);
+  const [count,setCount]=useState({
+    "totalCount": 0,
+    "pendingTasks": 0,
+    "completedTasks": 0
+})
+const handleFetchData = async () => {
+  try {
+    const response = await dashboardData();
+    console.log("response", response);
+    if (response.status === 200) {
+      setSampleTasks(response.data.tasksData);
+      setCount(response.data.counts); // Note: Ensure setCount is correctly spelled
+    }
+  } catch (err) {
+    console.log("err", err);
+  }
+};
 
+useEffect(() => {
+  const fetchData = async () => {
+    if (!token) {
+      await authContext.checkAuth(); // Make sure checkAuth is an async function
+    }
+    await handleFetchData();
+  };
+
+  fetchData();
+}, [token]);
+ 
+  
   const handleDateChange = date => {
     setValue(date);
   };
@@ -79,7 +91,7 @@ function Dashboard() {
   const getTileClassName = ({ date, view }) => {
     if (view === 'month') {
       const normalizedDate = normalizeDate(date);
-      const tasksForDate = sampleTasks.filter(task => normalizeDate(new Date(task.date)) === normalizedDate);
+      const tasksForDate = sampleTasks.filter(task => normalizeDate(new Date(task.dueDate)) === normalizedDate);
       if (tasksForDate.length > 0) {
         return 'highlight';
       }
@@ -90,7 +102,7 @@ function Dashboard() {
   const getTileContent = ({ date, view }) => {
     if (view === 'month') {
       const normalizedDate = normalizeDate(date);
-      const tasksForDate = sampleTasks.filter(task => normalizeDate(new Date(task.date)) === normalizedDate);
+      const tasksForDate = sampleTasks.filter(task => normalizeDate(new Date(task.dueDate)) === normalizedDate);
       if (tasksForDate.length > 0) {
         return (
           <Tooltip title={`Tasks: ${tasksForDate.length}`} arrow>
@@ -113,33 +125,23 @@ function Dashboard() {
                 <ComplexStatisticsCard
                   color="dark"
                   icon="weekend"
-                  title="Bookings"
-                  count={281}
+                  title="Total Tasks"
+                  count={count.totalCount}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
                 <ComplexStatisticsCard
                   icon="leaderboard"
-                  title="Today's Users"
-                  count="2,300"
-                  percentage={{
-                    color: "success",
-                    amount: "+3%",
-                    label: "than last month",
-                  }}
+                  title="Completed Tasks"
+                  count={count.completedTasks}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
                 <ComplexStatisticsCard
                   color="success"
                   icon="store"
-                  title="Revenue"
-                  count="34k"
-                  percentage={{
-                    color: "success",
-                    amount: "+1%",
-                    label: "than yesterday",
-                  }}
+                  title="Pending Tasks"
+                  count={count.pendingTasks}
                 />
               </Grid>
             </Grid>
