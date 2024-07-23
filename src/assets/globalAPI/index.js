@@ -3,8 +3,8 @@ import axios from "axios";
 var FormData = require("form-data");  
 // var api_url = "http://localhost:3008//web/";
 // var api_url = "https://app-backend-dscp.onrender.com/api/mobile/";
-axios.defaults.baseURL = "http://localhost:3008/web/";
-// axios.defaults.baseURL = "https://app-backend-dscp.onrender.com/api/mobile/";
+// axios.defaults.baseURL = "http://localhost:3008/web/";
+axios.defaults.baseURL = "https://task-manger-backend-skr2.onrender.com/web";
 
 export function login(data) {
 axios.defaults.headers.post["Content-Type"] = "application/json";
