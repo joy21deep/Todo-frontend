@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 import { addTask } from "../../../assets/globalAPI"
 
 const style = {
