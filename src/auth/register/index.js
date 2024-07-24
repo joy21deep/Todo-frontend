@@ -26,6 +26,7 @@ import AuthService from "services/auth-service";
 import { AuthContext } from "context";
 import { InputLabel } from "@mui/material";
 import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 function Register() {
   const authContext = useContext(AuthContext);
@@ -106,7 +107,7 @@ function Register() {
       // authContext.login(response.access_token, response.refresh_token);
 
       if(response.status){
-      Swal.fire({
+        MySwal.fire({
           title: 'Success!',
           text: 'Your action was successful!',
           icon: 'success',
